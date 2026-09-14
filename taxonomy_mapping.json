@@ -1,0 +1,293 @@
+{
+  "brand_handle": "AppleSupport",
+  "n_clusters_analyzed": 8,
+  "total_sampled_messages": 150,
+  "cluster_diagnostics": {
+    "cluster_0": {
+      "cluster_id": 0,
+      "size": 3,
+      "top_terms": [
+        "space",
+        "lock",
+        "settings",
+        "know",
+        "rid",
+        "change"
+      ],
+      "exemplar_message": "I don’t know. I need the space though. How do I get rid of some snapshots",
+      "sample_messages": [
+        "I can’t change lock screen anymore from ‘wallpaper’ in settings. How do I do it now?",
+        "I don’t know. I need the space though. How do I get rid of some snapshots",
+        "i have 256 hd and timemachine/system is taking up 150gb of space. I only have 25gb free. Is it suppose to work like this?"
+      ]
+    },
+    "cluster_1": {
+      "cluster_id": 1,
+      "size": 19,
+      "top_terms": [
+        "just",
+        "thank",
+        "let",
+        "cupertino",
+        "yes",
+        "email"
+      ],
+      "exemplar_message": "And the new ones tauntingly pretend they are saved- it’s just when I click on them or try to send them that the grey screen shows",
+      "sample_messages": [
+        "Just sent you all my DM",
+        "We’re going to need you to share the answers Angela. I️ can’t stand this!",
+        "Thanks, thing is I still have like 81 cents in credit and won't let me do that until I have zero credit"
+      ]
+    },
+    "cluster_2": {
+      "cluster_id": 2,
+      "size": 20,
+      "top_terms": [
+        "update",
+        "just",
+        "iphone",
+        "11",
+        "updated",
+        "yes"
+      ],
+      "exemplar_message": "iPhone 6 and yes it’s got the latest software update",
+      "sample_messages": [
+        "The newest update. I️ made sure to download it yesterday.",
+        "I have the iPhone 6s Plus and just did the most recent update.",
+        "I️ just updated it and it’s still coming up"
+      ]
+    },
+    "cluster_3": {
+      "cluster_id": 3,
+      "size": 19,
+      "top_terms": [
+        "letter",
+        "type",
+        "annoying",
+        "change",
+        "happening",
+        "hey"
+      ],
+      "exemplar_message": "tell me why I️’I’ve updated my phone twice and I️ can’t type letter I️ without getting a letter A and a question mark",
+      "sample_messages": [
+        "why are my I️’s changing not showing up correctly on any of my social media platforms?",
+        "I️ need answers because it’s annoying 🙃",
+        "Hey and anyone else who upgraded to ios11.1, are y’all having issues with capital “I️” in the Mail app? As it puts in “A”?"
+      ]
+    },
+    "cluster_4": {
+      "cluster_id": 4,
+      "size": 24,
+      "top_terms": [
+        "11",
+        "ios",
+        "ios11",
+        "keyboard",
+        "fix",
+        "just"
+      ],
+      "exemplar_message": "still happening, including on iOS 11.2 beta now. any ideas?",
+      "sample_messages": [
+        "MY HOME BUTTON DOESN’T WORK #IOS11",
+        "$100 billion says that solves my problem? I’m on 11.0.3 currently. Hold please.",
+        "iOS 11.1 it’s been getting worse for a few months now"
+      ]
+    },
+    "cluster_5": {
+      "cluster_id": 5,
+      "size": 20,
+      "top_terms": [
+        "music",
+        "control",
+        "phone",
+        "watch",
+        "apps",
+        "playing"
+      ],
+      "exemplar_message": "I can’t download songs. Progress icon keeps spinning. On both data + WiFi. Stream works though. Can’t add songs to playlists.",
+      "sample_messages": [
+        "I️ upgraded. I️t didn’t work.",
+        "Hi! What is going on? Has Youtube lost it? What can be done about it? Thanks for the support!",
+        "my Apple TV works fine with my phone, but when playing videos on Mac air it stutters so much &amp; sound is still on Mac not tv?"
+      ]
+    },
+    "cluster_6": {
+      "cluster_id": 6,
+      "size": 23,
+      "top_terms": [
+        "battery",
+        "happening",
+        "life",
+        "thanks",
+        "closed",
+        "hello"
+      ],
+      "exemplar_message": "It’s showing it’s connected and the battery is decreasing.",
+      "sample_messages": [
+        "This is what it looks like",
+        "This is what is happening...",
+        "are the call centres closed for the night?"
+      ]
+    },
+    "cluster_7": {
+      "cluster_id": 7,
+      "size": 22,
+      "top_terms": [
+        "iphone",
+        "phone",
+        "does",
+        "help",
+        "plus",
+        "new"
+      ],
+      "exemplar_message": "HELP ME. I have a problem with my iPhone 7😑",
+      "sample_messages": [
+        "Tried resetting my settings .. restarting my phone .. all that",
+        "I️ have an iPhone 7 Plus and yes I️ do",
+        "Thank you I updated my phone and now it is even slower and barely works. Thank you for ruining my phone.😤"
+      ]
+    }
+  },
+  "intents": {
+    "account_access_security": {
+      "label": "account_access_security",
+      "name": "Account Access & Apple ID Security",
+      "risk_tier": "high",
+      "description": "Apple ID locked, forgotten password, 2FA verification codes not received, account hacking or takeover fears.",
+      "rationale": "High risk because account lockouts prevent customer usage and deal with sensitive credentials and identity security.",
+      "sample_keywords": [
+        "apple id",
+        "password",
+        "locked",
+        "verification code",
+        "two factor",
+        "account",
+        "login",
+        "reset",
+        "security"
+      ]
+    },
+    "billing_subscription_refund": {
+      "label": "billing_subscription_refund",
+      "name": "Billing, Subscriptions & Refund Requests",
+      "risk_tier": "high",
+      "description": "Unexpected charges, subscription cancellations, refund disputes, App Store purchase issues, double billing.",
+      "rationale": "High risk due to direct financial impact, payment disputes, and chargeback threats.",
+      "sample_keywords": [
+        "charged",
+        "refund",
+        "subscription",
+        "money",
+        "billing",
+        "cancel subscription",
+        "receipt",
+        "bank",
+        "purchase"
+      ]
+    },
+    "cancellation_churn_complaint": {
+      "label": "cancellation_churn_complaint",
+      "name": "Severe Dissatisfaction, Churn & Legal Escalations",
+      "risk_tier": "high",
+      "description": "Customers threatening to cancel services, switch to competitors (e.g. Android/Samsung), legal or regulatory threats.",
+      "rationale": "High risk because churn threats and hostile sentiment require senior human intervention and brand damage control.",
+      "sample_keywords": [
+        "never again",
+        "cancel",
+        "switch to samsung",
+        "lawyer",
+        "attorney",
+        "unacceptable",
+        "disgusting",
+        "terrible",
+        "worst service"
+      ]
+    },
+    "os_update_battery_drain": {
+      "label": "os_update_battery_drain",
+      "name": "OS Update, Battery Life & Overheating",
+      "risk_tier": "medium",
+      "description": "Battery draining quickly, device heating up, issues immediately following an iOS/macOS update, performance throttling.",
+      "rationale": "Medium risk because widespread post-update issues affect user experience but rarely involve account security or financial loss.",
+      "sample_keywords": [
+        "battery",
+        "ios",
+        "update",
+        "drain",
+        "heat",
+        "overheating",
+        "slow",
+        "lag",
+        "dying fast"
+      ]
+    },
+    "hardware_physical_damage": {
+      "label": "hardware_physical_damage",
+      "name": "Hardware Malfunction & Physical Repair",
+      "risk_tier": "medium",
+      "description": "Cracked screen, broken buttons, charging port failure, physical hardware defects, Genius Bar repair booking.",
+      "rationale": "Medium risk because physical repairs require diagnostic check-ins and repair appointments.",
+      "sample_keywords": [
+        "screen",
+        "cracked",
+        "broken",
+        "repair",
+        "button",
+        "charging port",
+        "hardware",
+        "genius bar",
+        "camera"
+      ]
+    },
+    "connectivity_network_bluetooth": {
+      "label": "connectivity_network_bluetooth",
+      "name": "Connectivity, Wi-Fi, Bluetooth & Cellular",
+      "risk_tier": "medium",
+      "description": "Wi-Fi disconnecting, Bluetooth pairing failure (AirPods/CarPlay), cellular carrier signal drop, no service.",
+      "rationale": "Medium risk as it disrupts device functionality, often resolvable via network reset or troubleshooting steps.",
+      "sample_keywords": [
+        "wifi",
+        "bluetooth",
+        "airpods",
+        "connection",
+        "disconnecting",
+        "no service",
+        "carrier",
+        "cellular",
+        "pair"
+      ]
+    },
+    "how_to_feature_inquiry": {
+      "label": "how_to_feature_inquiry",
+      "name": "How-To Guides & Settings Guidance",
+      "risk_tier": "low",
+      "description": "Questions on how to configure settings, transfer data, use native features (Photos, iCloud backup, gestures).",
+      "rationale": "Low risk standard informational queries that can be safely automated with knowledge base links and instructions.",
+      "sample_keywords": [
+        "how do i",
+        "how to",
+        "settings",
+        "feature",
+        "transfer",
+        "enable",
+        "disable",
+        "where can i find"
+      ]
+    },
+    "other_general_inquiry": {
+      "label": "other_general_inquiry",
+      "name": "Other General Inquiries",
+      "risk_tier": "low",
+      "description": "General praise, miscellaneous feedback, or non-critical questions outside defined operational buckets.",
+      "rationale": "Low risk catch-all intent for non-urgent messages.",
+      "sample_keywords": [
+        "thanks",
+        "question",
+        "apple",
+        "release date",
+        "store hours",
+        "info"
+      ]
+    }
+  }
+}
