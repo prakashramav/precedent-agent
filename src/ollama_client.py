@@ -82,6 +82,7 @@ class OllamaClient:
         self,
         prompt: str,
         system_prompt: Optional[str] = None,
+        model: Optional[str] = None,
         temperature: float = 0.2,
         max_tokens: int = 400,
         stream: bool = False,
@@ -90,8 +91,9 @@ class OllamaClient:
         Call Ollama LLM generation endpoint (/api/generate).
         """
         url = f"{self.base_url}/api/generate"
+        target_model = model or self.llm_model
         payload = {
-            "model": self.llm_model,
+            "model": target_model,
             "prompt": prompt,
             "stream": stream,
             "options": {
