@@ -56,6 +56,47 @@ def load_dataset_samples(limit: int = 15):
     return samples
 
 
+def load_golden_dataframe() -> pd.DataFrame:
+    """Load golden set CSV and ensure text/label columns are object dtype to prevent pandas float64 TypeError."""
+    if not GOLDEN_SET_PATH.exists():
+        return pd.DataFrame()
+    df = pd.read_csv(GOLDEN_SET_PATH)
+    string_cols = [
+        "human_true_intent",
+        "human_should_escalate",
+        "human_notes",
+        "human_quality_helpfulness",
+        "human_quality_tone",
+        "human_quality_grounding",
+        "human_quality_conciseness",
+        "human_quality_notes",
+        "llm_judge_helpfulness",
+        "llm_judge_tone",
+        "llm_judge_grounding",
+        "llm_judge_conciseness",
+        "llm_judge_rationale",
+        "customer_message",
+        "customer_clean_text",
+        "initial_brand_reply",
+        "candidate_intent",
+        "system_predicted_intent",
+        "system_drafted_reply",
+        "system_escalation_action",
+        "system_escalation_reasons",
+        "trivial_predicted_intent",
+        "trivial_drafted_reply",
+        "trivial_escalation_action",
+        "simple_predicted_intent",
+        "simple_drafted_reply",
+        "simple_escalation_action",
+        "simple_escalation_reasons",
+    ]
+    for col in string_cols:
+        if col in df.columns:
+            df[col] = df[col].astype(object)
+    return df
+
+
 # ==============================================================================
 # SIDEBAR NAVIGATION
 # ==============================================================================
@@ -199,7 +240,7 @@ elif app_mode == "✍️ Golden Set Labeling & Human Judge":
                 st.rerun()
         st.stop()
 
-    df = pd.read_csv(GOLDEN_SET_PATH)
+    df = load_golden_dataframe()
 
     # Calculate labeling progress
     labeled_intent_count = df[df["human_true_intent"].notna() & (df["human_true_intent"].astype(str).str.strip() != "")].shape[0]
@@ -410,17 +451,22 @@ elif app_mode == "✍️ Golden Set Labeling & Human Judge":
             submit_label = st.form_submit_button("💾 Save & Next Row", type="primary", use_container_width=True)
 
     if submit_label:
-        # Update DataFrame
-        df.at[curr_idx, "human_true_intent"] = selected_intent
-        df.at[curr_idx, "human_should_escalate"] = "escalate" if "Escalate" in selected_escalate else "auto_handle"
-        df.at[curr_idx, "human_notes"] = human_note
+        # Ensure column is object dtype before assignment to prevent pandas TypeError
+        for col in ["human_true_intent", "human_should_escalate", "human_notes", "human_quality_notes"]:
+            df[col] = df[col].astype(object)
+
+        df.loc[curr_idx, "human_true_intent"] = str(selected_intent)
+        df.loc[curr_idx, "human_should_escalate"] = "escalate" if "Escalate" in selected_escalate else "auto_handle"
+        df.loc[curr_idx, "human_notes"] = str(human_note)
 
         if is_qual:
-            df.at[curr_idx, "human_quality_helpfulness"] = quality_scores["helpfulness"]
-            df.at[curr_idx, "human_quality_tone"] = quality_scores["tone"]
-            df.at[curr_idx, "human_quality_grounding"] = quality_scores["grounding"]
-            df.at[curr_idx, "human_quality_conciseness"] = quality_scores["conciseness"]
-            df.at[curr_idx, "human_quality_notes"] = quality_scores["notes"]
+            for qcol in ["human_quality_helpfulness", "human_quality_tone", "human_quality_grounding", "human_quality_conciseness", "human_quality_notes"]:
+                df[qcol] = df[qcol].astype(object)
+            df.loc[curr_idx, "human_quality_helpfulness"] = quality_scores["helpfulness"]
+            df.loc[curr_idx, "human_quality_tone"] = quality_scores["tone"]
+            df.loc[curr_idx, "human_quality_grounding"] = quality_scores["grounding"]
+            df.loc[curr_idx, "human_quality_conciseness"] = quality_scores["conciseness"]
+            df.loc[curr_idx, "human_quality_notes"] = str(quality_scores["notes"])
 
         # Save to CSV
         df.to_csv(GOLDEN_SET_PATH, index=False, encoding="utf-8")
@@ -458,11 +504,13 @@ elif app_mode == "✍️ Golden Set Labeling & Human Judge":
                         retrieved_precedents=precedents,
                         intent_label=selected_intent,
                     )
-                    df.at[curr_idx, "llm_judge_helpfulness"] = score.helpfulness
-                    df.at[curr_idx, "llm_judge_tone"] = score.tone
-                    df.at[curr_idx, "llm_judge_grounding"] = score.grounding
-                    df.at[curr_idx, "llm_judge_conciseness"] = score.conciseness
-                    df.at[curr_idx, "llm_judge_rationale"] = score.rationale
+                    for jcol in ["llm_judge_helpfulness", "llm_judge_tone", "llm_judge_grounding", "llm_judge_conciseness", "llm_judge_rationale"]:
+                        df[jcol] = df[jcol].astype(object)
+                    df.loc[curr_idx, "llm_judge_helpfulness"] = score.helpfulness
+                    df.loc[curr_idx, "llm_judge_tone"] = score.tone
+                    df.loc[curr_idx, "llm_judge_grounding"] = score.grounding
+                    df.loc[curr_idx, "llm_judge_conciseness"] = score.conciseness
+                    df.loc[curr_idx, "llm_judge_rationale"] = str(score.rationale)
                     df.to_csv(GOLDEN_SET_PATH, index=False, encoding="utf-8")
                     st.rerun()
 
@@ -481,7 +529,7 @@ elif app_mode == "📊 Evaluation & Benchmarks Dashboard":
         st.warning("Golden set CSV not found. Please generate the golden set first.")
         st.stop()
 
-    df = pd.read_csv(GOLDEN_SET_PATH)
+    df = load_golden_dataframe()
     labeled_count = df[df["human_true_intent"].notna() & (df["human_true_intent"].astype(str).str.strip() != "")].shape[0]
 
     st.write(f"**Evaluation Progress:** `{labeled_count} / {len(df)}` examples labeled by human annotator ({labeled_count/len(df):.1%})")
