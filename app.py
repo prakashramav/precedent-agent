@@ -121,7 +121,7 @@ st.sidebar.write(f"• **Embeddings:** `{config.OLLAMA_EMBED_MODEL}` (768-dim)")
 
 
 # ==============================================================================
-# MODE 1: LIVE PIPELINE PLAYGROUND (Task 1 Core)
+# MODE 1: LIVE PIPELINE PLAYGROUND
 # ==============================================================================
 if app_mode == "🚀 Live Pipeline Playground":
     st.header(f"Customer Support AI Agent (@{config.BRAND_HANDLE})")
@@ -223,7 +223,7 @@ if app_mode == "🚀 Live Pipeline Playground":
 
 
 # ==============================================================================
-# MODE 2: GOLDEN SET LABELING & HUMAN JUDGE (Task 2 Core)
+# MODE 2: GOLDEN SET LABELING & HUMAN JUDGE
 # ==============================================================================
 elif app_mode == "✍️ Golden Set Labeling & Human Judge":
     st.header("Golden Set Labeling & Human Quality Judge")
@@ -242,26 +242,34 @@ elif app_mode == "✍️ Golden Set Labeling & Human Judge":
 
     df = load_golden_dataframe()
 
-    # Calculate labeling progress
+    # Calculate labeling progress with zero-division guards
+    total_len = len(df)
     labeled_intent_count = df[df["human_true_intent"].notna() & (df["human_true_intent"].astype(str).str.strip() != "")].shape[0]
     labeled_esc_count = df[df["human_should_escalate"].notna() & (df["human_should_escalate"].astype(str).str.strip() != "")].shape[0]
     quality_subset_df = df[df["is_quality_subset"] == True]
+    quality_subset_len = len(quality_subset_df)
     quality_scored_count = quality_subset_df[
         pd.to_numeric(quality_subset_df["human_quality_helpfulness"], errors="coerce").notna()
     ].shape[0]
 
+    intent_pct = f"{labeled_intent_count/total_len:.1%}" if total_len > 0 else "0.0%"
+    esc_pct = f"{labeled_esc_count/total_len:.1%}" if total_len > 0 else "0.0%"
+    qual_pct = f"{quality_scored_count/quality_subset_len:.1%}" if quality_subset_len > 0 else "0.0%"
+
     # Metrics Progress Bar
     pcol1, pcol2, pcol3, pcol4 = st.columns(4)
-    pcol1.metric("Total Evaluation Set", f"{len(df)} rows")
-    pcol2.metric("Intents Labeled", f"{labeled_intent_count} / {len(df)}", f"{labeled_intent_count/len(df):.1%}")
-    pcol3.metric("Escalations Labeled", f"{labeled_esc_count} / {len(df)}", f"{labeled_esc_count/len(df):.1%}")
-    pcol4.metric("Quality Subset Scored", f"{quality_scored_count} / {len(quality_subset_df)}", f"{quality_scored_count/len(quality_subset_df):.1%}")
+    pcol1.metric("Total Evaluation Set", f"{total_len} rows")
+    pcol2.metric("Intents Labeled", f"{labeled_intent_count} / {total_len}", intent_pct)
+    pcol3.metric("Escalations Labeled", f"{labeled_esc_count} / {total_len}", esc_pct)
+    pcol4.metric("Quality Subset Scored", f"{quality_scored_count} / {quality_subset_len}", qual_pct)
 
     st.divider()
 
-    # Filters & Navigation
+    # Filters & Navigation with index bounds safety
     if "current_index" not in st.session_state:
         st.session_state.current_index = 0
+    if total_len > 0:
+        st.session_state.current_index = max(0, min(st.session_state.current_index, total_len - 1))
 
     col_nav1, col_nav2, col_nav3, col_nav4 = st.columns([1.5, 1.5, 2, 3])
     with col_nav1:

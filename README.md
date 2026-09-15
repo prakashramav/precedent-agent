@@ -2,14 +2,45 @@
 
 A grounded, locally-run AI customer support agent for Twitter/X customer service, evaluated on real-world conversation threads from Kaggle's **Customer Support on Twitter** (`thoughtvector/customer-support-on-twitter`) dataset subsampled for **@AppleSupport**.
 
-This repository contains the complete **Core Pipeline (Task 1)** and the **Evaluation, Baselines, Proof Layer & Deliverables (Task 2)**.
+---
+
+## Problem Statement
+
+Automating customer support on social media for an enterprise tech brand like **@AppleSupport** presents unique operational, reputational, and safety challenges that standard chatbot frameworks cannot address:
+
+1. **High Stakes & Public Scrutiny**:
+   Every tweet posted by `@AppleSupport` is publicly indexed, syndicated across search engines, and scrutinized by journalists and customers. A single incorrect response, fabricated policy, or robotic reply can trigger viral public relations backlash.
+
+2. **High-Risk Intents & Sensitive Identity Protection**:
+   Customer inquiries range from simple settings how-tos to critical account takeovers, Apple ID lockouts, two-factor authentication failures, and in-app purchase refund disputes. An automated system must **never** hallucinate account credentials, attempt unauthorized credential recovery in public, or promise non-existent refunds. Sensitive queries require deterministic routing to verified human specialists or secure self-serve portals (`iforgot.apple.com`).
+
+3. **The "Silent Resolution" Fallacy on Social Media**:
+   In naive historical Twitter support datasets, threads where the customer did not tweet again are frequently counted as "resolved on platform." In reality, **over 41% of historical @AppleSupport tweets directed customers to Direct Messages (DM)** (*"Please DM us your serial number"*), while other customers simply abandoned Twitter in frustration. Relying on thread silence as a training or retrieval ground truth poisons generative models with unhelpful boilerplate rather than actionable solutions.
+
+4. **Asymmetric Cost of Classification Errors**:
+   In consumer care, errors are severely asymmetric:
+   - **False Positive (Type I)**: The system escalates a simple how-to query to a human agent. *Cost: ~$3 in human triage time; the customer still receives correct help.*
+   - **False Negative (Type II)**: The system auto-handles an active security compromise, legal threat, or financial dispute with a cheerful, canned public troubleshooting tip. *Cost: Catastrophic security breach, chargeback disputes, viral brand damage, and regulatory liability.*
+   Systems must be engineered to minimize False Negatives above all else.
+
+5. **LLM Hallucinations in Technical Troubleshooting**:
+   Small local generative models (7B–8B parameters) frequently hallucinate plausible-sounding but non-existent iOS settings, incompatible troubleshooting steps, or outdated hardware repair pricing. Generating responses without strict grounding in verified historical resolution precedents introduces operational liability.
+
+### The Solution
+This project implements an end-to-end, locally-run customer support agent designed specifically to address these challenges:
+- **Clean Conversation Thread Reconstruction**: Traces full reply trees, strips noisy mentions and URLs, and explicitly isolates DM-routing threads.
+- **8-Intent Derived Taxonomy with Risk Tiers**: Categorizes incoming queries into High, Medium, and Low risk buckets to govern automated action.
+- **Sub-Millisecond Vector Retrieval (RAG)**: Pure NumPy cosine similarity index over 768-dim embeddings (`nomic-embed-text`) retrieving proven historical resolution pairs.
+- **Grounded Reply Generation**: Drafts Twitter-length responses using local `llama3.1:8b`, strictly conditioned on retrieved precedents with explicit context-sufficiency checks.
+- **Multi-Layered Deterministic Escalation Policy**: Rules enforce human handoff based on intent risk tiers, confidence thresholds (<0.65), precedent similarity (<0.55), legal/urgent keywords (`sue`, `refund`, `fraud`), and customer emotional distress (ALL CAPS $\ge 55\%$).
+- **Rigorous Evaluation & Proof Layer**: Includes a 180-example stratified golden evaluation set, trivial and keyword baselines, an independent LLM-as-a-judge (`llama3.2:latest`), and an interactive Streamlit application.
 
 ---
 
 ## Key Highlights & Proof Deliverables
 
 1. **Stratified Golden Evaluation Set (180 Examples)**: Stratified across 8 taxonomy intents, single-turn vs. multi-turn threads, and public platform resolutions vs. threads pushing to DM (`flag_pushed_to_dm`).
-2. **Interactive Streamlit Labeling & Human-Judge UI (`app.py`)**: Mode 2 enables human hand-labeling of true intent, escalation safety, annotator notes, and 1–5 reply quality rubric sub-scores.
+2. **Interactive Streamlit Labeling & Human-Judge UI (`app.py`)**: Enables human hand-labeling of true intent, escalation safety, annotator notes, and 1–5 reply quality rubric sub-scores.
 3. **Comparative Baselines Suite (`src/baselines.py`)**: Evaluates the main agent side-by-side against a **Trivial Baseline** (majority class predictor + static reply) and a **Simple Baseline** (rule/keyword matcher + 8-intent template bank).
 4. **Independent LLM-as-a-Judge (`src/llm_judge.py`)**: Evaluates reply quality across 4 rubric dimensions (Helpfulness, Tone, Grounding, Conciseness) using an independent local model (`llama3.2:latest`) to eliminate self-preference bias against `llama3.1:8b`.
 5. **Statistical Agreement Metrics (`src/evaluation.py`)**: Computes Cohen's quadratic weighted kappa ($\kappa_w$) and Mean Absolute Error between LLM judge scores and human ground-truth on the 40 quality examples.
